@@ -141,6 +141,10 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    packagingOptions {
+        jniLibs.useLegacyPackaging = true
+    }
+
     defaultConfig {
         applicationId 'demo.sahha.expo'
         minSdkVersion rootProject.ext.minSdkVersion
