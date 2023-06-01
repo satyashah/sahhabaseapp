@@ -17,7 +17,7 @@
     "expo-status-bar": "~1.4.2",
     "react": "18.1.0",
     "react-native": "0.70.8",
-    "sahha-react-native": "^0.2.2",
+    "sahha-react-native": "^0.2.5",
     "typescript": "^4.6.3"
   },
   "devDependencies": {
