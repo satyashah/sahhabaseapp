@@ -66,6 +66,10 @@ export default function App() {
     <View style={styles.container}>
       <Text>SENSOR STATUS : {SahhaSensorStatus[sensorStatus]}</Text>
       <Button
+        title="Check Sensors"
+        onPress={getSensorStatus}
+      />
+      <Button
         title="Enable Sensors"
         disabled={isDisabled}
         onPress={enableSensors}
