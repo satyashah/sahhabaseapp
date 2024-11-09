@@ -12,6 +12,14 @@ export default function App() {
     SahhaSensorStatus.pending
   );
 
+  const [authStatus, setAuthStatus] = useState<boolean>(false);
+
+  const sensorList = [SahhaSensor.step_count, SahhaSensor.sleep, SahhaSensor.device_lock, SahhaSensor.heart_rate, SahhaSensor.heart_rate_variability_sdnn];
+
+  const APPID = "gcNrPzZ9dGIjuYN7JyKOlv0EVXn0Q6sU";
+  const APPSCRT = "TKFsLCrzILD5NB9uxJ7XrRusTdwcJ7UPEv8gbcuYNAmc3pCPRRnse7cGcHAI7YIn";
+  const USERID = "satya_mobile"; // Change these per user (add a user input for device name)
+
   var isDisabled =
     sensorStatus === SahhaSensorStatus.unavailable ||
     sensorStatus === SahhaSensorStatus.enabled;
@@ -27,14 +35,28 @@ export default function App() {
         console.error(`Error: ${error}`);
       } else {
         getSensorStatus();
+        getUserAuthenticated();
       }
     });
   }, []);
 
+  const getUserAuthenticated = () => {
+    Sahha.isAuthenticated(
+      (error: string, success: boolean) => {
+        if (error) {
+          console.error(`Error: ${error}`);
+        } else if (success != null) {
+          console.log("authenticated " + success);
+          setAuthStatus(success)
+        }
+      }
+    );
+  }
+
   const getSensorStatus = () => {
     console.log("check");
     Sahha.getSensorStatus(
-      [SahhaSensor.step_count, SahhaSensor.sleep, SahhaSensor.device_lock],
+      sensorList,
       (error: string, value: SahhaSensorStatus) => {
         console.log("checked " + value);
         if (error) {
@@ -54,7 +76,7 @@ export default function App() {
   const enableSensors = () => {
     console.log("enable");
     Sahha.enableSensors(
-      [SahhaSensor.step_count, SahhaSensor.sleep, SahhaSensor.device_lock],
+      sensorList,
       (error: string, value: SahhaSensorStatus) => {
         console.log("enable " + value);
         if (error) {
@@ -71,8 +93,30 @@ export default function App() {
     );
   };
 
+  const auth = () => {
+    Sahha.authenticate(APPID, APPSCRT, USERID, 
+      (error: string, success: boolean) => {
+        if (error) {
+          console.error(`Error: ${error}`);
+        } else if (success != null) {
+          console.log("authenticated " + success);
+          setAuthStatus(success)
+        }
+      }
+    )
+  }
+
+  // Next Steps: https://docs.sahha.ai/docs/guides/widgets#react-native
+
   return (
     <View style={styles.container}>
+      <Text>AUTHENTICATED : {String(authStatus)}</Text>
+      <Button
+        title="Authenticate"
+        disabled={authStatus}
+        onPress={auth}
+      />
+
       <Text>SENSOR STATUS : {SahhaSensorStatus[sensorStatus]}</Text>
       <Button title="Check Sensors" onPress={getSensorStatus} />
       <Button
