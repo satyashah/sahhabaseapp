@@ -6,6 +6,8 @@ import Sahha, {
   SahhaSensor,
   SahhaSensorStatus,
 } from "sahha-react-native";
+import { WebView } from 'react-native-webview';
+
 
 export default function App() {
   const [sensorStatus, setSensorStatus] = useState<SahhaSensorStatus>(
@@ -94,7 +96,7 @@ export default function App() {
   };
 
   const auth = () => {
-    Sahha.authenticate(APPID, APPSCRT, USERID, 
+    Sahha.authenticate(APPID, APPSCRT, USERID,
       (error: string, success: boolean) => {
         if (error) {
           console.error(`Error: ${error}`);
@@ -108,8 +110,75 @@ export default function App() {
 
   // Next Steps: https://docs.sahha.ai/docs/guides/widgets#react-native
 
+
+  const MyWebComponent = () => {
+
+    const [profileToken, setProfileToken] = useState<string>('');
+    console.log("empty -  Profile Token: ", profileToken);
+
+
+    useEffect(() => {
+      Sahha.getProfileToken((error: string, token?: string) => {
+        if (error) {
+          console.error(`Error: ${error}`);
+        } else if (token) {
+          // console.log(`** Profile Token: ${profileToken}`);
+          console.log(`** getProfileToken ** Profile Token: ${token}`);
+          setProfileToken(token);
+          // console.log(`^^^^ Profile Token: ${profileToken}`);
+        } else {
+          console.log(`Profile Token: null`);
+        }
+      });
+    }, []);
+
+    console.log("MyWebComponent -- Auth Status: ", authStatus);
+    console.log("MyWebComponent -- Sensor Status: ", sensorStatus);
+    console.log("MyWebComponent -- Profile Token: ", profileToken);
+
+    if (!profileToken) {
+      return <Text>no profileToken </Text>;
+    } else {
+      // return <Text>show WebView...</Text>;
+      return <View style={styles.container}>
+
+        {/* // Use https://webview.sahha.ai/app in production */}
+
+        <WebView source={{
+          uri: "https://sandbox.webview.sahha.ai/app",
+          // uri: "https://webview.sahha.ai/app",
+
+          headers: {
+            'Authorization': profileToken,
+          },
+        }}
+          // style={{ flex: 1 }} 
+          style={styles.webview}
+        />
+      </View >;
+      // return <View style={styles.container}>
+      //   <WebView
+      //     source={{ uri: "https://www.google.com" }}
+      //     style={styles.page}
+      //   />
+      // </View > 
+    }
+
+    // Use https://webview.sahha.ai/app in production
+
+    // return <WebView source={{
+    //   // uri: "https://sandbox.webview.sahha.ai/app",
+    //   uri: "https://webview.sahha.ai/app",
+
+    //   headers: {
+    //     'Authorization': profileToken,
+    //   },
+    // }} style={{ flex: 1 }} />;
+  }
+
   return (
     <View style={styles.container}>
+
       <Text>AUTHENTICATED : {String(authStatus)}</Text>
       <Button
         title="Authenticate"
@@ -124,12 +193,16 @@ export default function App() {
         disabled={isDisabled}
         onPress={enableSensors}
       />
+
+      <MyWebComponent />
+
       <Button
         title={"Open App Settings"}
         onPress={() => {
           Sahha.openAppSettings();
         }}
       />
+
       <StatusBar style="auto" />
     </View>
   );
@@ -142,4 +215,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
+
+  webview: {
+    marginTop: 20,
+    maxHeight: 500,
+    width: 320,
+    // width: "100%",
+    // height: "100%",
+    flex: 1
+  }
 });
