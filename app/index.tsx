@@ -123,6 +123,8 @@ export default function App() {
           console.error(`Error: ${error}`);
         } else if (token) {
           // console.log(`** Profile Token: ${profileToken}`);
+          // ${profileToken}` is now empty -> ${token}
+
           console.log(`** getProfileToken ** Profile Token: ${token}`);
           setProfileToken(token);
           // console.log(`^^^^ Profile Token: ${profileToken}`);
@@ -147,7 +149,6 @@ export default function App() {
         <WebView source={{
           uri: "https://sandbox.webview.sahha.ai/app",
           // uri: "https://webview.sahha.ai/app",
-
           headers: {
             'Authorization': profileToken,
           },
@@ -156,24 +157,7 @@ export default function App() {
           style={styles.webview}
         />
       </View >;
-      // return <View style={styles.container}>
-      //   <WebView
-      //     source={{ uri: "https://www.google.com" }}
-      //     style={styles.page}
-      //   />
-      // </View > 
     }
-
-    // Use https://webview.sahha.ai/app in production
-
-    // return <WebView source={{
-    //   // uri: "https://sandbox.webview.sahha.ai/app",
-    //   uri: "https://webview.sahha.ai/app",
-
-    //   headers: {
-    //     'Authorization': profileToken,
-    //   },
-    // }} style={{ flex: 1 }} />;
   }
 
   return (
